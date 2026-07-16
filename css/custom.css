@@ -1,0 +1,109 @@
+/* Custom overrides on top of the Webflow export.
+   Kept in a separate file so the generated stylesheets can still be
+   re-exported/replaced safely later. */
+
+/* Hide the "Made in Webflow" badge. Webflow's own script re-injects the
+   badge on every load, so it must be hidden here (removing the <a> from
+   the HTML alone isn't enough). */
+.w-webflow-badge {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------
+   My Projects: expand a row on hover to reveal its description.
+   Only on mouse/trackpad (hover: hover + pointer: fine) - touch devices
+   have no hover state, so they use Webflow's native tap interaction
+   instead (row's overflow: hidden already keeps the text clipped).
+   !important beats the inline height/color styles Webflow sets inline.
+   -------------------------------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+  .work-wrapper .paragraph-36 {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .work-wrapper:hover {
+    height: 60vh !important;
+  }
+
+  .work-wrapper:hover .flex-block-38 {
+    height: 100% !important;
+  }
+
+  .work-wrapper:hover .paragraph-36 {
+    color: rgb(235, 235, 235) !important; /* row bg turns dark on hover */
+    opacity: 1;
+    transition-delay: 0.15s;
+  }
+}
+
+/* --------------------------------------------------------------
+   Responsive fixes.
+   Webflow already ships breakpoints at 991 / 767 / 479px, but a few
+   sections were left desktop-only and break on small screens. These
+   rules restack/resize them instead of just shrinking fonts.
+   -------------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* My Projects: stack text above images instead of side-by-side */
+  .infos {
+    flex-flow: column;
+    align-items: flex-start;
+    padding: 0.8em 1.2em;
+  }
+
+  .flex-block-37,
+  .paragraph-36 {
+    width: 100%;
+  }
+
+  .flex-block-38 {
+    width: 100% !important; /* overrides inline width: 50% from Webflow */
+  }
+
+  .flex-block-35 {
+    grid-column-gap: 1em;
+    grid-row-gap: 0.3em;
+    flex-wrap: wrap;
+  }
+
+  .section-12 {
+    height: auto;
+    padding: 6em 1.2em 2em;
+  }
+
+  .paragraph-37,
+  .paragraph-37-copy {
+    width: 100%;
+    font-size: 1.6em;
+  }
+
+  /* Homepage: sticky background-video block and project grid gaps */
+  .div-block-10 {
+    /* vw, not %: parent is width:auto and centered, so a % width here
+       can't resolve and collapses to 0 */
+    width: 92vw;
+    height: 50vh;
+  }
+
+  .colonne-g,
+  .colonne-d {
+    grid-column-gap: 1em;
+    grid-row-gap: 1em;
+  }
+}
+
+@media (max-width: 479px) {
+  .flex-block-35 {
+    grid-row-gap: 0.2em;
+  }
+
+  .heading-8 {
+    font-size: 1.4rem;
+  }
+
+  .colonne-g,
+  .colonne-d {
+    grid-column-gap: 0.75em;
+    grid-row-gap: 0.75em;
+  }
+}
