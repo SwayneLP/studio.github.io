@@ -10,31 +10,119 @@
 }
 
 /* --------------------------------------------------------------
-   My Projects: expand a row on hover to reveal its description.
-   Only on mouse/trackpad (hover: hover + pointer: fine) - touch devices
-   have no hover state, so they use Webflow's native tap interaction
-   instead (row's overflow: hidden already keeps the text clipped).
-   !important beats the inline height/color styles Webflow sets inline.
+   My Projects: full-screen scroll-snap gallery.
+   Each project fills the viewport (starting right under the fixed
+   header - the intro text section was removed); its first image is
+   a full-bleed cover background, and the title/description sit
+   bottom-left.
+   .projects-scroll (wrapping the project list + footer) is the
+   explicit scroll-snap container: this page has no <!DOCTYPE>, so it
+   renders in quirks mode where document.scrollingElement is <body> -
+   relying on scroll-snap-type on html/body directly is unreliable
+   across browsers there, so we use a normal overflow:auto container
+   instead. It's still the full viewport height, so it looks/feels
+   exactly like the page itself is scrolling; a single scroll gesture
+   moves between projects and the last project scrolls seamlessly
+   into the footer (and back up again).
    -------------------------------------------------------------- */
-@media (hover: hover) and (pointer: fine) {
-  .work-wrapper .paragraph-36 {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
+.projects-scroll {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  /* No scroll-behavior: smooth here - combined with scroll-snap-type
+     mandatory it can conflict and freeze scrolling entirely in some
+     engines (confirmed: scrollTop assignment silently did nothing
+     with both set, worked fine with just scroll-snap-type). Native
+     snap easing already feels smooth without it. */
+}
 
-  .work-wrapper:hover {
-    height: 60vh !important;
-  }
+.work-wrapper {
+  /* !important needed: Webflow's IX2 script re-applies an inline
+     height (e.g. "height: 8vh") on load, which would otherwise beat
+     a plain class rule. */
+  height: 100vh !important;
+  width: 100%;
+  flex-shrink: 0; /* .section-11 is a flex column - without this, items shrink to fit */
+  border-top: none;
+  cursor: default;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  overflow: hidden;
+}
 
-  .work-wrapper:hover .flex-block-38 {
-    height: 100% !important;
-  }
+.work-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 45%);
+  z-index: 1;
+  pointer-events: none;
+}
 
-  .work-wrapper:hover .paragraph-36 {
-    color: rgb(235, 235, 235) !important; /* row bg turns dark on hover */
-    opacity: 1;
-    transition-delay: 0.15s;
-  }
+.project-bg {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 0;
+}
+
+.work-wrapper .infos {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 30%;
+  height: auto;
+  align-items: flex-end;
+  padding: 3em;
+}
+
+.work-wrapper .flex-block-37 {
+  width: 100%;
+  height: auto;
+}
+
+.work-wrapper .paragraph-36 {
+  width: 100%;
+  opacity: 1;
+}
+
+.work-wrapper .text-block-12,
+.work-wrapper .heading-8,
+.work-wrapper .paragraph-36 {
+  color: #fff !important;
+}
+
+.projects-scroll .section-footer {
+  scroll-snap-align: start;
+}
+
+/* --------------------------------------------------------------
+   Mentions légales page: white text in the Bricolage Grotesque
+   font (titles bold, body copy regular), and a tighter gap between
+   the big page title and the intro paragraph below it.
+   Scoped to .mentions-legales-page so the shared heading-h1/
+   heading-h4/paragraph-32/paragraph-18 classes keep their default
+   look everywhere else on the site.
+   -------------------------------------------------------------- */
+.mentions-legales-page .heading-h1,
+.mentions-legales-page .heading-h4 {
+  color: #fff;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 700;
+}
+
+.mentions-legales-page .paragraph-32,
+.mentions-legales-page .paragraph-18 {
+  color: #fff;
+  font-family: "Bricolage Grotesque", sans-serif;
+  font-weight: 400;
+}
+
+.mentions-legales-page .heading-h1.margin-bottom-48 {
+  margin-bottom: 1rem;
 }
 
 /* --------------------------------------------------------------
@@ -44,37 +132,20 @@
    rules restack/resize them instead of just shrinking fonts.
    -------------------------------------------------------------- */
 @media (max-width: 767px) {
-  /* My Projects: stack text above images instead of side-by-side */
-  .infos {
-    flex-flow: column;
-    align-items: flex-start;
-    padding: 0.8em 1.2em;
-  }
-
-  .flex-block-37,
-  .paragraph-36 {
+  /* My Projects: full-width text block over the background image */
+  .work-wrapper .infos {
     width: 100%;
+    padding: 1.5em 1.2em;
   }
 
-  .flex-block-38 {
-    width: 100% !important; /* overrides inline width: 50% from Webflow */
+  .work-wrapper .flex-block-37 {
+    width: 100%;
   }
 
   .flex-block-35 {
     grid-column-gap: 1em;
     grid-row-gap: 0.3em;
     flex-wrap: wrap;
-  }
-
-  .section-12 {
-    height: auto;
-    padding: 6em 1.2em 2em;
-  }
-
-  .paragraph-37,
-  .paragraph-37-copy {
-    width: 100%;
-    font-size: 1.6em;
   }
 
   /* Homepage: sticky background-video block and project grid gaps */
