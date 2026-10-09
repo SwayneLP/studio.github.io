@@ -12,8 +12,7 @@
   const snapTargets = Array.from(container.querySelectorAll('.work-wrapper, .section-footer'));
   if (!snapTargets.length) return;
 
-  // Native mandatory snap usually settles in ~700-800ms; doubling that.
-  const DURATION = 1600;
+  const DURATION = 300;
 
   let isAnimating = false;
 
